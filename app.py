@@ -1,11 +1,12 @@
 import requests
 import re
 import time
+import env
 
 BASE_URL = "https://api.tokapi.online/v1/search/live"
 HEADERS = {
-    "x-project-name": "tokapi",
-    "x-api-key": "ee8eff9a559b4584920d69ea2fa537b9"
+    "x-project-name": X_PROJECT_NAME,
+    "x-api-key": X_API_KEY
 }
 
 # List of keywords to iterate through
