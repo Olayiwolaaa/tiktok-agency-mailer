@@ -3,7 +3,7 @@ import re
 import time
 import env
 
-BASE_URL = "https://api.tokapi.online/v1/search/live"
+BASE_URL = X_BASE_URL
 HEADERS = {
     "x-project-name": X_PROJECT_NAME,
     "x-api-key": X_API_KEY
