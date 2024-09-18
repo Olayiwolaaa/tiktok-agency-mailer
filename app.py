@@ -1,6 +1,6 @@
 import requests
 import re
-import time
+import csv
 import env
 
 BASE_URL = X_BASE_URL
@@ -10,28 +10,7 @@ HEADERS = {
 }
 
 # List of keywords to iterate through
-keywords_list = [
-    "Livestreaming",
-    "Gameplay",
-    "Followers",
-    "Chat interaction",
-    "Subscriber",
-    "Stream schedule",
-    "Affiliate",
-    "Partner",
-    "Stream overlay",
-    "Bits",
-    "Emotes",
-    "Raid",
-    "Hosting",
-    "Viewers",
-    "Clips",
-    "Donation",
-    "Streamlabs",
-    "Stream highlights",
-    "Twitch chat bots",
-    "VOD (Video on Demand)"
-]
+keywords_list = KEYWORD
 
 PARAMS = {
     "region": "GB",
@@ -62,7 +41,7 @@ def extract_display_id(rawdata):
     return match.group(1) if match else None
 
 # Function to fetch and process raw data for a specific keyword
-def get_rawdata_for_keyword(keyword):
+def get_rawdata_for_keyword(keyword, csv_writer):
     offset = 1
     request_count = 0  # Counter to keep track of requests
     
@@ -101,8 +80,8 @@ def get_rawdata_for_keyword(keyword):
                 if not email or follower_count > 100000:
                     continue
                 
-                # Print email, username, and follower count
-                print(f"Email: {email}, Username: https://tiktok.com/@{display_id}, Follower Count: {follower_count}")
+                # Write email and username to CSV file
+                csv_writer.writerow([email, f"https://tiktok.com/@{display_id}"])
         
         # Check if there's no more data
         if has_more == 0:
@@ -115,11 +94,14 @@ def get_rawdata_for_keyword(keyword):
         # Increment request count and pause every 5 requests
         request_count += 1
 
-# Iterate through each keyword in the keywords list
+# Iterate through each keyword in the keywords list and write to CSV file
 def get_rawdata():
-    for keyword in keywords_list:
-        get_rawdata_for_keyword(keyword)
-        print("Moving to the next keyword...\n")
+    with open('output.csv', mode='w', newline='', encoding='utf-8') as file:
+        csv_writer = csv.writer(file)
+        csv_writer.writerow(['Emails', 'Usernames'])  # Write header row
+        for keyword in keywords_list:
+            get_rawdata_for_keyword(keyword, csv_writer)
+            print("Moving to the next keyword...\n")
 
 # Run the function
 get_rawdata()
