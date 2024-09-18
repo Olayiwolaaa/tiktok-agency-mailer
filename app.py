@@ -3,14 +3,14 @@ import re
 import csv
 import env
 
-BASE_URL = X_BASE_URL
+BASE_URL = env.X_BASE_URL
 HEADERS = {
-    "x-project-name": X_PROJECT_NAME,
-    "x-api-key": X_API_KEY
+    "x-project-name": env.X_PROJECT_NAME,
+    "x-api-key": env.X_API_KEY
 }
 
 # List of keywords to iterate through
-keywords_list = KEYWORD
+keywords_list = env.KEYWORDS
 
 PARAMS = {
     "region": "GB",
