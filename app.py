@@ -41,7 +41,7 @@ def extract_display_id(rawdata):
     return match.group(1) if match else None
 
 # Function to fetch and process raw data for a specific keyword
-def get_rawdata_for_keyword(keyword, csv_writer):
+def get_rawdata_for_keyword(keyword, csv_writer, seen_emails, seen_usernames):
     offset = 1
     request_count = 0  # Counter to keep track of requests
     
@@ -80,8 +80,16 @@ def get_rawdata_for_keyword(keyword, csv_writer):
                 if not email or follower_count > 100000:
                     continue
                 
+                # Skip if email or username is already seen
+                if email in seen_emails or display_id in seen_usernames:
+                    continue
+                
                 # Write email and username to CSV file
                 csv_writer.writerow([email, f"https://tiktok.com/@{display_id}"])
+                
+                # Add email and username to the seen sets
+                seen_emails.add(email)
+                seen_usernames.add(display_id)
         
         # Check if there's no more data
         if has_more == 0:
@@ -96,11 +104,14 @@ def get_rawdata_for_keyword(keyword, csv_writer):
 
 # Iterate through each keyword in the keywords list and write to CSV file
 def get_rawdata():
+    seen_emails = set()
+    seen_usernames = set()
+    
     with open('output.csv', mode='w', newline='', encoding='utf-8') as file:
         csv_writer = csv.writer(file)
         csv_writer.writerow(['Emails', 'Usernames'])  # Write header row
         for keyword in keywords_list:
-            get_rawdata_for_keyword(keyword, csv_writer)
+            get_rawdata_for_keyword(keyword, csv_writer, seen_emails, seen_usernames)
             print("Moving to the next keyword...\n")
 
 # Run the function
